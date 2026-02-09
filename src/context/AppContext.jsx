@@ -4,35 +4,67 @@ import dayjs from 'dayjs';
 export const AppContext = createContext();
 
 const initialMembers = [
-    { id: '1', name: 'Member 1' },
-    { id: '2', name: 'Member 2' },
-    { id: '3', name: 'Member 3' },
-    { id: '4', name: 'Member 4' },
-    { id: '5', name: 'Member 5' },
+    { id: '1', name: 'Shuvo Das' },
+    { id: '2', name: 'Rahim Ahmed' },
+    { id: '3', name: 'Asif Karim' },
+    { id: '4', name: 'Milon Hossain' },
+    { id: '5', name: 'Tanvir Islam' },
 ];
 
 const initialExpenses = [
     {
         id: '1',
         date: dayjs().format('YYYY-MM-01'),
-        details: 'Rice, Oil, Onion',
-        cost: 1500,
-        addedBy: ['Member 1'],
+        details: 'Rice 25kg, Soya Oil 5L',
+        cost: 3500,
+        addedBy: ['Shuvo Das'],
     },
     {
         id: '2',
         date: dayjs().format('YYYY-MM-02'),
-        details: 'Chicken, Potato',
-        cost: 800,
-        addedBy: ['Member 2', 'Member 3'],
+        details: 'Chicken 4kg, Eggs 2 Dozen',
+        cost: 1200,
+        addedBy: ['Rahim Ahmed', 'Asif Karim'],
     },
 ];
 
 export const AppProvider = ({ children }) => {
-    const [members, setMembers] = useState(initialMembers);
-    const [expenses, setExpenses] = useState(initialExpenses);
+    const [members, setMembers] = useState(() => {
+        const saved = localStorage.getItem('bb_members');
+        return saved ? JSON.parse(saved) : initialMembers;
+    });
 
-    // Mock API calls
+    const [expenses, setExpenses] = useState(() => {
+        const saved = localStorage.getItem('bb_expenses');
+        return saved ? JSON.parse(saved) : initialExpenses;
+    });
+
+    const [isAuthenticated, setIsAuthenticated] = useState(() => {
+        return localStorage.getItem('bb_auth') === 'true';
+    });
+
+    useEffect(() => {
+        localStorage.setItem('bb_members', JSON.stringify(members));
+    }, [members]);
+
+    useEffect(() => {
+        localStorage.setItem('bb_expenses', JSON.stringify(expenses));
+    }, [expenses]);
+
+    const login = (username, password) => {
+        if (username === 'admin' && password === 'admin') {
+            setIsAuthenticated(true);
+            localStorage.setItem('bb_auth', 'true');
+            return true;
+        }
+        return false;
+    };
+
+    const logout = () => {
+        setIsAuthenticated(false);
+        localStorage.removeItem('bb_auth');
+    };
+
     const addExpense = (newExpense) => {
         const expenseWithId = { ...newExpense, id: Date.now().toString() };
         setExpenses([expenseWithId, ...expenses]);
@@ -59,6 +91,9 @@ export const AppProvider = ({ children }) => {
         <AppContext.Provider value={{
             members,
             expenses,
+            isAuthenticated,
+            login,
+            logout,
             addExpense,
             addMember,
             updateMember,

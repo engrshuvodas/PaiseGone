@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { Table, Button, Card, Modal, Form, Input, Space, Typography, notification, Popconfirm } from 'antd';
-import { UserAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Table, Button, Card, Modal, Form, Input, Space, Typography, notification, Popconfirm, Avatar } from 'antd';
+import { UserAddOutlined, EditOutlined, DeleteOutlined, UserOutlined, TeamOutlined } from '@ant-design/icons';
 import { AppContext } from '../context/AppContext';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const ManageMembers = () => {
     const { members, addMember, updateMember, deleteMember } = useContext(AppContext);
@@ -24,8 +24,15 @@ const ManageMembers = () => {
     };
 
     const handleDelete = async (id) => {
-        await deleteMember(id);
-        notification.success({ message: 'Member deleted' });
+        try {
+            await deleteMember(id);
+            notification.success({
+                message: 'Member Removed',
+                description: 'The member has been removed from calculations.',
+            });
+        } catch (e) {
+            notification.error({ message: 'Error removing member' });
+        }
     };
 
     const handleOk = async () => {
@@ -33,15 +40,15 @@ const ManageMembers = () => {
             const values = await form.validateFields();
             if (editingMember) {
                 await updateMember(editingMember.id, values.name);
-                notification.success({ message: 'Member updated' });
+                notification.success({ message: 'Member updated successfully' });
             } else {
                 await addMember(values.name);
-                notification.success({ message: 'Member added' });
+                notification.success({ message: 'New member added to the mess' });
             }
             setIsModalOpen(false);
             form.resetFields();
         } catch (error) {
-            console.log('Validation failed:', error);
+            // Validation handled by form
         }
     };
 
@@ -49,34 +56,43 @@ const ManageMembers = () => {
         {
             title: 'No.',
             key: 'index',
-            render: (text, record, index) => index + 1,
-            width: 70,
+            render: (text, record, index) => <Text type="secondary">{index + 1}</Text>,
+            width: 60,
         },
         {
             title: 'Member Name',
             dataIndex: 'name',
             key: 'name',
+            render: (name) => (
+                <Space>
+                    <Avatar icon={<UserOutlined />} style={{ backgroundColor: '#1890ff' }} />
+                    <Text strong>{name}</Text>
+                </Space>
+            )
         },
         {
             title: 'Actions',
             key: 'action',
-            width: 200,
+            align: 'right',
             render: (_, record) => (
                 <Space size="middle">
                     <Button
+                        type="text"
                         icon={<EditOutlined />}
                         onClick={() => handleEdit(record)}
                     >
                         Edit
                     </Button>
                     <Popconfirm
-                        title="Delete member?"
-                        description="Are you sure to delete this member? Calculations will be updated."
+                        title="Remove Member?"
+                        description="All future calculations will split by the remaining members. Are you sure?"
                         onConfirm={() => handleDelete(record.id)}
                         okText="Yes"
                         cancelText="No"
+                        okButtonProps={{ danger: true }}
                     >
                         <Button
+                            type="text"
                             danger
                             icon={<DeleteOutlined />}
                         >
@@ -90,38 +106,50 @@ const ManageMembers = () => {
 
     return (
         <Card
-            title={<Title level={3}>Manage Mess Members</Title>}
+            bordered={false}
+            className="shadow-sm"
+            title={<Title level={3} style={{ margin: 0 }}><TeamOutlined /> Mess Members</Title>}
             extra={
                 <Button
                     type="primary"
                     icon={<UserAddOutlined />}
                     onClick={handleAdd}
+                    size="large"
                 >
-                    Add New Member
+                    Add New Brother
                 </Button>
             }
         >
+            <Text type="secondary" style={{ display: 'block', marginBottom: '24px' }}>
+                Manage the group of members sharing the mess. Currently: {members.length} members.
+            </Text>
+
             <Table
                 columns={columns}
                 dataSource={members}
                 rowKey="id"
                 pagination={false}
+                className="custom-table"
             />
 
             <Modal
-                title={editingMember ? "Edit Member" : "Add New Member"}
+                title={editingMember ? "Edit Member Details" : "Add New Brother"}
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={() => setIsModalOpen(false)}
-                okText={editingMember ? "Update" : "Add"}
+                okText={editingMember ? "Update Name" : "Add Member"}
+                destroyOnClose
             >
-                <Form form={form} layout="vertical">
+                <Form form={form} layout="vertical" style={{ marginTop: '16px' }}>
                     <Form.Item
                         name="name"
                         label="Full Name"
-                        rules={[{ required: true, message: 'Please enter member name' }]}
+                        rules={[
+                            { required: true, message: 'Name is required' },
+                            { min: 3, message: 'Name too short' }
+                        ]}
                     >
-                        <Input placeholder="Enter member name" />
+                        <Input placeholder="e.g. Shuvo Das" prefix={<UserOutlined />} />
                     </Form.Item>
                 </Form>
             </Modal>

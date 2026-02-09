@@ -1,49 +1,39 @@
-# Mess Expense Tracker - User Manual
+# BajarBros - Mess Expense Tracker 🍛
 
-Welcome to **Mess Expense Tracker**, a simple and powerful tool for bachelors sharing a mess to track their monthly grocery (bajar) expenses and divide costs fairly.
+Welcome to **BajarBros**, the ultimate utility for mess-mates to track and settle daily বাজার (grocery) expenses fairly and efficiently.
 
 ## 🚀 Getting Started
 
-To run the application locally:
+1.  **Installation**: Run `npm install` in the project root.
+2.  **Start App**: Run `npm start` or `npm run dev`.
+3.  **Access**: Open `http://localhost:5173` in your browser.
 
-1.  Navigate to the project directory: `cd MessMate`
-2.  Install dependencies: `npm install`
-3.  Start the development server: `npm run dev`
-4.  Open your browser at: `http://localhost:5173`
+## ✨ Key Features
 
-## 🛠 Features
+### 1. The Smarter Dashboard
+- **Live Summary**: See the total mess spend and exactly how much each person needs to contribute for an equal split.
+- **Settlement Engine**: The app automatically identifies who is "in debt" and who is "owed money" based on their contributions.
+- **Smart Suggestions**: It generates a list of exactly who should give how much to whom (e.g., *"Rahim should give ৳450 to Shuvo"*).
+- **Date Filtering**: View records for specific months or custom date ranges.
 
-### 1. Dashboard (Home)
-- **Summary Cards**: Instantly see the total mess expenses for the selected period and the share per person.
-- **Expense Table**: A detailed list of all shopping records including date, items bought, total cost, and who added the record.
-- **Date Filtering**: Use the date range picker to filter records by month or specific dates.
-- **Search**: Quickly find specific items or records by typing in the search bar.
-- **Excel Export**: Download the current filtered view as a professionally formatted Excel file (`.xlsx`) including total and per-person summaries at the bottom.
+### 2. Multi-Payer Bajar Entry
+- Use the **Add Bajar** page to log shopping.
+- Supports **Multiple Payers**: If 2 or 3 brothers split the cost of a shopping trip at the store, you can select all of them. The app will divide the credit among them equally.
+- Detailed item lists and data validation.
 
-### 2. Add Expense
-- Use the **Add Expense** page to record new shopping trips.
-- Enter the date, a detailed description (e.g., "Rice, Chicken, Oil"), and the total cost.
-- **Added By**: You can select one or multiple members who contributed or were present during the shopping.
-- Validation ensures that you don't miss any required fields or enter invalid amounts.
+### 3. Member Management
+- Add new "brothers" to the mess or update names easily.
+- Calculations update instantly when members are added or removed.
 
-### 3. Manage Members
-- Keep track of everyone living in the mess.
-- **Add New Member**: Click the button to add a new person.
-- **Edit/Delete**: Update member names or remove them if they leave.
-- **Dynamic Calculation**: Adding or removing members automatically updates the "Per Person Share" calculation on the dashboard.
+### 4. Excel Reports
+- Download high-quality `.xlsx` reports from the dashboard.
+- Includes total summaries and share-per-person data at the bottom.
 
-## 💻 Tech Stack
-- **Frontend**: React.js
-- **UI Library**: Ant Design (Antd)
-- **Icons**: Ant Design Icons
-- **Date Handling**: Day.js
-- **Exporting**: SheetJS (XLSX)
-- **State Management**: React Context API
-
-## 📝 Important Notes
-- This is a frontend-only implementation. Data is stored in memory and will reset when the page is refreshed.
-- In a real-world scenario, the `axios` placeholders in `AppContext.jsx` would be replaced with actual API endpoints.
-- The app uses **Ant Design** components for a responsive and premium feel.
+## 💻 Technical Stack
+- **UI**: Ant Design (Premium Green/Blue Theme)
+- **Engine**: React Context API + Hooks
+- **Logic**: Greedy Settlement Algorithm
+- **Persistence**: LocalStorage (your data stays in your browser!)
 
 ---
-Created by **Antigravity** for **MessMate**.
+*Created for bachelors, by BajarBros.*
