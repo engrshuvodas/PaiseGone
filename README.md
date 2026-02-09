@@ -4,8 +4,13 @@ Welcome to **BajarBros**, the ultimate utility for mess-mates to track and settl
 
 ## 🚀 Getting Started
 
+### Option A: One-Click Run (Recommended for Windows)
+Just double-click the **`Run_BajarBros.bat`** file in the root folder. 
+It will automatically install dependencies (first time only) and start the server for you.
+
+### Option B: Manual Terminal
 1.  **Installation**: Run `npm install` in the project root.
-2.  **Start App**: Run `npm start` or `npm run dev`.
+2.  **Start App**: Run `npm start`.
 3.  **Access**: Open `http://localhost:5173` in your browser.
 
 ## ✨ Key Features
