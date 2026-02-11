@@ -1,4 +1,4 @@
-/** Software Version: 2.2 | Dev: Engr Shuvo Das **/
+/** Software Version: 2.3 | Dev: Engr Shuvo Das **/
 import React, { useContext, useState } from 'react';
 import { Layout, Menu, Button, theme, Space, Typography, Popconfirm, Avatar, Dropdown, Badge } from 'antd';
 import {
@@ -14,7 +14,8 @@ import {
     SettingOutlined,
     UnorderedListOutlined,
     InfoCircleOutlined,
-    WhatsAppOutlined
+    WhatsAppOutlined,
+    FireOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -46,7 +47,12 @@ const AppLayout = () => {
         {
             key: '/add-expense',
             icon: <PlusCircleOutlined style={{ fontSize: 18 }} />,
-            label: 'Add Bajar',
+            label: 'Add Expense',
+        },
+        {
+            key: '/meals',
+            icon: <FireOutlined style={{ fontSize: 18 }} />,
+            label: 'Daily Meals',
         },
         {
             key: '/bajar-records',
@@ -182,7 +188,7 @@ const AppLayout = () => {
                 </Content>
 
                 <Footer style={{ textAlign: 'center', background: 'transparent', color: 'var(--text-secondary)', padding: '24px 50px' }}>
-                    PaiseGone Expense Tracker • <b>Version 2.1</b> • ©{new Date().getFullYear()} <br />
+                    PaiseGone Expense Tracker • <b>Version 2.3</b> • ©{new Date().getFullYear()} <br />
                     Developed with ❤️ By <a href="https://github.com/engrshuvodas/" target="_blank" rel="noopener noreferrer" style={{ color: '#ff5f6d', fontWeight: 600 }}>Engr Shuvo Das</a> • <a href="/about" style={{ color: '#bfbfbf' }}>About</a>
                 </Footer>
             </Layout>

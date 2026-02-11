@@ -1,4 +1,4 @@
-/** Software Version: 2.2 | Dev: Engr Shuvo Das **/
+/** Software Version: 2.3 | Dev: Engr Shuvo Das **/
 import React, { createContext, useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 
@@ -12,21 +12,15 @@ const initialMembers = [
     { id: '5', name: 'Dipto' },
 ];
 
-const initialExpenses = [
-    {
-        id: '1',
-        date: dayjs().format('YYYY-MM-01'),
-        details: 'Rice 25kg, Soya Oil 5L',
-        cost: 3500,
-        paidBy: { '1': 3500 },
-    },
-    {
-        id: '2',
-        date: dayjs().format('YYYY-MM-02'),
-        details: 'Chicken 4kg, Eggs 2 Dozen',
-        cost: 1200,
-        paidBy: { '2': 600, '3': 600 },
-    },
+const initialExpenses = [];
+const initialMeals = [];
+const defaultCategories = [
+    { id: 'bajar', name: 'Bazaar/Grocery', icon: '🛒', color: '#ff4d4f' },
+    { id: 'rent', name: 'House Rent', icon: '🏠', color: '#1890ff' },
+    { id: 'utility', name: 'Utilities (Gas/Water)', icon: '⚡', color: '#faad14' },
+    { id: 'internet', name: 'Internet/WiFi', icon: '🌐', color: '#722ed1' },
+    { id: 'chef', name: 'Chef/Helper Salary', icon: '👨‍🍳', color: '#52c41a' },
+    { id: 'others', name: 'Others', icon: '✨', color: '#8c8c8c' },
 ];
 
 export const AppProvider = ({ children }) => {
@@ -94,6 +88,15 @@ export const AppProvider = ({ children }) => {
         }
     });
 
+    const [meals, setMeals] = useState(() => {
+        try {
+            const saved = localStorage.getItem('bb_meals');
+            return saved ? JSON.parse(saved) : initialMeals;
+        } catch (e) {
+            return initialMeals;
+        }
+    });
+
     const [isAuthenticated, setIsAuthenticated] = useState(() => {
         try {
             const auth = localStorage.getItem('bb_auth');
@@ -126,6 +129,10 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         localStorage.setItem('bb_expenses', JSON.stringify(expenses));
     }, [expenses]);
+
+    useEffect(() => {
+        localStorage.setItem('bb_meals', JSON.stringify(meals));
+    }, [meals]);
 
     const updateSettings = (newSettings) => {
         setSettings(prev => ({ ...prev, ...newSettings }));
@@ -177,10 +184,33 @@ export const AppProvider = ({ children }) => {
         return Promise.resolve();
     };
 
+    const addMeal = (date, mealData) => {
+        const newMeal = { id: Date.now().toString(), date, meals: mealData };
+        // Check if date already exists
+        const existingIdx = meals.findIndex(m => m.date === date);
+        if (existingIdx !== -1) {
+            const updatedMeals = [...meals];
+            updatedMeals[existingIdx] = newMeal;
+            setMeals(updatedMeals);
+        } else {
+            setMeals([newMeal, ...meals]);
+        }
+        return Promise.resolve(newMeal);
+    };
+
+    const deleteMeal = (id) => {
+        setMeals(meals.filter(m => m.id !== id));
+        return Promise.resolve();
+    };
+
     return (
         <AppContext.Provider value={{
             members,
             expenses,
+            setExpenses,
+            meals,
+            setMeals,
+            categories: defaultCategories,
             isAuthenticated,
             settings,
             resolvedTheme,
@@ -192,7 +222,9 @@ export const AppProvider = ({ children }) => {
             deleteExpense,
             addMember,
             updateMember,
-            deleteMember
+            deleteMember,
+            addMeal,
+            deleteMeal
         }}>
             {children}
         </AppContext.Provider>

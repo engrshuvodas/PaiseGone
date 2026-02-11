@@ -1,4 +1,4 @@
-# <img src="https://img.icons8.com/plasticine/100/shopping-basket-2.png" width="40" /> MessMate (PaiseGone) 💸 (v2.2)
+# <img src="https://img.icons8.com/plasticine/100/shopping-basket-2.png" width="40" /> MessMate (PaiseGone) 💸 (v2.3)
 
 [![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)](https://reactjs.org/)
@@ -87,4 +87,4 @@ No need to open a terminal! We have built a dedicated runner for you:
 | **Facebook** | [Engr Shuvo](https://www.facebook.com/engr.shuvo74886/) |
 
 ---
-*Created with ❤️ for Mess Managers everywhere. v2.1 (February 2026)*
+*Created with ❤️ for Mess Managers everywhere. v2.3 (February 2026)*

@@ -1,4 +1,4 @@
-/** Software Version: 2.2 | Dev: Engr Shuvo Das **/
+/** Software Version: 2.3 | Dev: Engr Shuvo Das **/
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import AppLayout from './components/AppLayout';
@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import Settings from './pages/Settings';
 import About from './pages/About';
 import Settlements from './pages/Settlements';
+import Meals from './pages/Meals';
 import { AppProvider, AppContext } from './context/AppContext';
 import { ConfigProvider, theme as antdTheme } from 'antd';
 
@@ -56,6 +57,7 @@ const AppContent = () => {
                         {/* Root path '/' - This should show Dashboard */}
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/add-expense" element={<AddExpense />} />
+                        <Route path="/meals" element={<Meals />} />
                         <Route path="/bajar-records" element={<BajarRecords />} />
                         <Route path="/members" element={<ManageMembers />} />
                         <Route path="/settings" element={<Settings />} />
