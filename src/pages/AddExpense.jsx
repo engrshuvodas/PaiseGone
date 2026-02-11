@@ -1,6 +1,6 @@
-/** Software Version: 2.2 | Dev: Engr Shuvo Das **/
+/** Software Version: 2.3 | Dev: Engr Shuvo Das **/
 import React, { useState, useEffect, useContext } from 'react';
-import { Form, Input, InputNumber, DatePicker, Button, Card, Typography, notification, Row, Col, Space, Divider, Alert } from 'antd';
+import { Form, Input, InputNumber, DatePicker, Button, Card, Typography, notification, Row, Col, Space, Divider, Alert, Select } from 'antd';
 import { SaveOutlined, ArrowLeftOutlined, ShoppingCartOutlined, WalletOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
@@ -10,7 +10,7 @@ const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const AddExpense = () => {
-    const { members, addExpense, settings } = useContext(AppContext);
+    const { members, addExpense, settings, categories } = useContext(AppContext);
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const [totalEntered, setTotalEntered] = useState(0);
@@ -48,6 +48,7 @@ const AddExpense = () => {
                 date: values.date.format('YYYY-MM-DD'),
                 details: values.details,
                 cost: values.cost,
+                category: values.category || 'bajar',
                 paidBy: paidBy,
             };
 
@@ -109,6 +110,24 @@ const AddExpense = () => {
                                 rules={[{ required: true, message: 'Select date' }]}
                             >
                                 <DatePicker style={{ width: '100%', borderRadius: 10 }} variant="filled" />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="category"
+                                label={<Text strong>Expense Category</Text>}
+                                rules={[{ required: true, message: 'Select category' }]}
+                                initialValue="bajar"
+                            >
+                                <Select style={{ width: '100%', borderRadius: 10 }} variant="filled">
+                                    {categories.map(cat => (
+                                        <Select.Option key={cat.id} value={cat.id}>
+                                            <Space>
+                                                <span>{cat.icon}</span>
+                                                <span>{cat.name}</span>
+                                            </Space>
+                                        </Select.Option>
+                                    ))}
+                                </Select>
                             </Form.Item>
 
                             <Form.Item

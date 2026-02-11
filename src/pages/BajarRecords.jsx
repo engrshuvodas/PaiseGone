@@ -1,6 +1,6 @@
-/** Software Version: 2.2 | Dev: Engr Shuvo Das **/
+/** Software Version: 2.3 | Dev: Engr Shuvo Das **/
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { Table, Card, Button, Typography, Space, Tag, Input, Modal, Form, DatePicker, InputNumber, notification, Popconfirm, Divider, Row, Col, Tooltip } from 'antd';
+import { Table, Card, Button, Typography, Space, Tag, Input, Modal, Form, DatePicker, InputNumber, notification, Popconfirm, Divider, Row, Col, Tooltip, Select } from 'antd';
 import {
     ShoppingCartOutlined,
     PlusOutlined,
@@ -27,7 +27,7 @@ const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 
 const BajarRecords = () => {
-    const { expenses, members, settings, updateExpense, deleteExpense } = useContext(AppContext);
+    const { expenses, members, settings, updateExpense, deleteExpense, categories } = useContext(AppContext);
     const [searchText, setSearchText] = useState('');
     const [dateRange, setDateRange] = useState([dayjs().startOf('month'), dayjs().endOf('month')]);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -90,6 +90,7 @@ const BajarRecords = () => {
             date: dayjs(record.date),
             details: record.details,
             cost: record.cost,
+            category: record.category || 'bajar',
             contributions: record.paidBy || {}
         });
         setIsEditModalOpen(true);
@@ -125,6 +126,7 @@ const BajarRecords = () => {
                 date: values.date.format('YYYY-MM-DD'),
                 details: values.details,
                 cost: actualTotal,
+                category: values.category || 'bajar',
                 paidBy: cleanPaidBy
             };
 
@@ -164,6 +166,19 @@ const BajarRecords = () => {
             ),
         },
         {
+            title: 'Category',
+            dataIndex: 'category',
+            key: 'category',
+            render: (catId) => {
+                const cat = categories.find(c => c.id === catId) || categories[0];
+                return (
+                    <Tag bordered={false} style={{ background: `${cat.color}15`, color: cat.color, borderRadius: 6 }}>
+                        {cat.icon} {cat.name}
+                    </Tag>
+                );
+            }
+        },
+        {
             title: 'Paid By',
             key: 'paidBy',
             render: (_, record) => (
@@ -185,7 +200,7 @@ const BajarRecords = () => {
             dataIndex: 'cost',
             key: 'cost',
             align: 'right',
-            render: (cost) => <Text strong style={{ color: '#ff5f6d', fontSize: 15 }}>{currency}{cost.toLocaleString()}</Text>,
+            render: (cost) => <Text strong style={{ color: 'var(--text-main)', fontSize: 15 }}>{currency}{cost.toLocaleString()}</Text>,
             sorter: (a, b) => a.cost - b.cost,
         },
         {
@@ -334,6 +349,17 @@ const BajarRecords = () => {
                         <Col span={12}>
                             <Form.Item name="date" label={<Text strong><CalendarOutlined /> Date</Text>} rules={[{ required: true }]}>
                                 <DatePicker style={{ width: '100%', borderRadius: 8 }} />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item name="category" label={<Text strong>Category</Text>} rules={[{ required: true }]}>
+                                <Select style={{ width: '100%', borderRadius: 8 }}>
+                                    {categories.map(cat => (
+                                        <Select.Option key={cat.id} value={cat.id}>
+                                            {cat.icon} {cat.name}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
                             </Form.Item>
                         </Col>
                     </Row>

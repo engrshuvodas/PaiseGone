@@ -1,4 +1,4 @@
-/** Software Version: 2.2 | Dev: Engr Shuvo Das **/
+/** Software Version: 2.3 | Dev: Engr Shuvo Das **/
 import React, { useContext, useMemo, useState } from 'react';
 import { Card, Table, Typography, Space, Button, Tag, Row, Col, Divider, Modal, Tooltip, Badge, Avatar } from 'antd';
 import {
@@ -18,7 +18,7 @@ import dayjs from 'dayjs';
 const { Title, Text, Paragraph } = Typography;
 
 const SettlementSummary = () => {
-    const { expenses, members, settings } = useContext(AppContext);
+    const { expenses, members, settings, meals } = useContext(AppContext);
     const [previewModal, setPreviewModal] = useState({ visible: false, member: null, message: '' });
 
     const currency = settings?.currency || '₹';
@@ -28,28 +28,52 @@ const SettlementSummary = () => {
         return expenses.reduce((sum, item) => sum + (item.cost || 0), 0);
     }, [expenses]);
 
-    const perPersonShare = useMemo(() => {
-        return members.length > 0 ? (totalExpense / members.length) : 0;
-    }, [totalExpense, members.length]);
+    const totalBazaarExpense = useMemo(() => {
+        return expenses
+            .filter(ex => !ex.category || ex.category === 'bajar')
+            .reduce((sum, item) => sum + (item.cost || 0), 0);
+    }, [expenses]);
+
+    const totalOtherExpense = useMemo(() => {
+        return totalExpense - totalBazaarExpense;
+    }, [totalExpense, totalBazaarExpense]);
+
+    const totalMeals = useMemo(() => {
+        return meals.reduce((sum, day) => {
+            const daySum = Object.values(day.meals || {}).reduce((dSum, m) => dSum + (m.breakfast || 0) + (m.lunch || 0) + (m.dinner || 0), 0);
+            return sum + daySum;
+        }, 0);
+    }, [meals]);
+
+    const mealRate = useMemo(() => {
+        return totalMeals > 0 ? (totalBazaarExpense / totalMeals) : 0;
+    }, [totalBazaarExpense, totalMeals]);
 
     const settlementData = useMemo(() => {
         return members.map(member => {
-            const totalPaidByThisMember = expenses.reduce((sum, item) => {
-                const contribution = (item.paidBy || {})[member.id] || 0;
-                return sum + contribution;
+            const paid = expenses.reduce((sum, item) => sum + ((item.paidBy || {})[member.id] || 0), 0);
+            const individualMeals = meals.reduce((sum, day) => {
+                const m = (day.meals || {})[member.id] || { breakfast: 0, lunch: 0, dinner: 0 };
+                return sum + (m.breakfast || 0) + (m.lunch || 0) + (m.dinner || 0);
             }, 0);
 
-            const balance = totalPaidByThisMember - perPersonShare;
+            const foodCost = individualMeals * mealRate;
+            const fixedCost = members.length > 0 ? (totalOtherExpense / members.length) : 0;
+            const totalCost = foodCost + fixedCost;
+
             return {
                 id: member.id,
                 name: member.name,
                 phone: member.phone || '',
-                paid: totalPaidByThisMember,
-                shouldPay: perPersonShare,
-                balance: balance
+                meals: individualMeals,
+                foodCost,
+                fixedCost,
+                totalCost,
+                paid,
+                balance: paid - totalCost
             };
         });
-    }, [members, expenses, perPersonShare]);
+    }, [members, expenses, meals, mealRate, totalOtherExpense]);
 
     const generateWhatsAppMessage = (member) => {
         const monthName = dayjs().format('MMMM, YYYY');
@@ -59,8 +83,13 @@ const SettlementSummary = () => {
         let message = `*📊 MESS SETTLEMENT NOTICE — ${monthName.toUpperCase()}*\n\n`;
         message += `Hello Brother *${member.name}*,\n`;
         message += `Here is your summary for the current month:\n\n`;
-        message += `• Total Mess Expense: ${currency}${totalExpense.toLocaleString()}\n`;
-        message += `• Per Person Share: ${currency}${perPersonShare.toLocaleString()}\n`;
+        message += `• Total Bazaar Cost: ${currency}${totalBazaarExpense.toLocaleString()}\n`;
+        message += `• Total Meals: ${totalMeals}\n`;
+        message += `• *Meal Rate: ${currency}${mealRate.toFixed(2)}*\n\n`;
+        message += `• Your Total Meals: ${member.meals}\n`;
+        message += `• Your Food Cost: ${currency}${member.foodCost.toFixed(0)}\n`;
+        message += `• Your Fixed Cost: ${currency}${member.fixedCost.toFixed(0)}\n`;
+        message += `• *Your Total Share: ${currency}${member.totalCost.toFixed(0)}*\n\n`;
         message += `• You have Paid: ${currency}${member.paid.toLocaleString()}\n`;
         message += `----------------------------\n`;
         message += `*STATUS: ${status}*\n`;
@@ -73,7 +102,7 @@ const SettlementSummary = () => {
             message += `_Thank you for your extra contribution! You will receive this amount during settlement._\n\n`;
         }
 
-        message += `Best Regards,\n*Mess Manager (PaiseGone v2.2)*`;
+        message += `Best Regards,\n*Mess Manager (PaiseGone v2.3)*`;
 
         return message;
     };
@@ -120,10 +149,16 @@ const SettlementSummary = () => {
             render: (paid) => <Text>{currency}{paid.toLocaleString()}</Text>
         },
         {
-            title: 'Share',
-            dataIndex: 'shouldPay',
-            key: 'shouldPay',
-            render: (share) => <Text type="secondary">{currency}{share.toLocaleString()}</Text>
+            title: 'Meals',
+            dataIndex: 'meals',
+            key: 'meals',
+            render: (m) => <Text strong>{m}</Text>
+        },
+        {
+            title: 'Share Cost',
+            dataIndex: 'totalCost',
+            key: 'totalCost',
+            render: (cost) => <Text type="secondary">{currency}{cost.toFixed(0)}</Text>
         },
         {
             title: 'Status',

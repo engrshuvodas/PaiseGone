@@ -53,13 +53,24 @@ const About = () => {
                         </div>
                         <div>
                             <Tag color="red" style={{ padding: '4px 12px', fontSize: '14px', borderRadius: '8px' }}>
-                                Version 2.2
+                                Version 2.3
                             </Tag>
                         </div>
                         <div>
                             <Text type="secondary">Latest Update Date: </Text>
                             <Text strong>February 10, 2026</Text>
                         </div>
+                    </Space>
+                </div>
+
+                <Divider orientation="left">What's New in Version 2.3</Divider>
+                <div style={{ marginBottom: '40px' }}>
+                    <Space direction="vertical" size="small">
+                        <Text><RocketOutlined style={{ color: '#ff4d4f', marginRight: 8 }} /> **Advanced Meal Management System** added.</Text>
+                        <Text><RocketOutlined style={{ color: '#ff4d4f', marginRight: 8 }} /> **Category-based Expense Tracking** (Rent, Utilities, etc.).</Text>
+                        <Text><RocketOutlined style={{ color: '#ff4d4f', marginRight: 8 }} /> **Premium Dark Mode** fully optimized for all containers.</Text>
+                        <Text><RocketOutlined style={{ color: '#ff4d4f', marginRight: 8 }} /> Monthly Settlement archives and reset functionality.</Text>
+                        <Text><RocketOutlined style={{ color: '#ff4d4f', marginRight: 8 }} /> Enhanced PDF & Excel reports with meal rate calculation.</Text>
                     </Space>
                 </div>
 
